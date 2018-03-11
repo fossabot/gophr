@@ -1,6 +1,7 @@
 from django import VERSION as django_version
 from django.contrib import admin
 from mptt.admin import DraggableMPTTAdmin
+from nested_admin.nested import NestedModelAdmin, NestedStackedInline, NestedTabularInline
 
 from cms.models import Page, Section, Component, ComponentType
 
@@ -12,7 +13,13 @@ def publish_page(modeladmin, request, queryset):
 publish_page.short_description = 'Publish Page'
 
 
-class SectionInlineAdmin(admin.TabularInline):
+class ComponentInlineAdmin(NestedStackedInline):
+
+    model = Component
+    extra = 1
+    # sortable_field_name = ''
+
+class SectionInlineAdmin(NestedTabularInline):
 
     model = Section
     can_delete = False
@@ -20,9 +27,10 @@ class SectionInlineAdmin(admin.TabularInline):
     extra = 1
     verbose_name = 'Section for this Page'
     show_change_link = False
+    inlines = [ComponentInlineAdmin]
 
 
-class PageAdmin(DraggableMPTTAdmin):
+class PageAdmin(DraggableMPTTAdmin, NestedModelAdmin):
     mptt_level_indent = 20
 
     list_display = ('tree_actions', 'indented_title', 'api_url', 'path', 'created_at', 'updated_at', 'is_published')

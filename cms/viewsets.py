@@ -15,8 +15,7 @@ class PageViewSet(ModelViewSet):
 
     def get_queryset(self):
 
-        if request.is
-        return Page.objects.filter(is_published=True, path=self.kwargs.get('path', '/'))
+        return Page.objects.filter(path=self.kwargs.get('path', '/'))
 
 
     def get_object(self):

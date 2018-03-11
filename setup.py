@@ -17,7 +17,8 @@ requirements = [
     'django-mptt==0.9.0',
     'Django',
     'djangorestframework>3',
-    'jsonschema==2.6.0'
+    'jsonschema==2.6.0',
+    'django-nested-admin==3.0.21'
 ]
 setup_requirements = ['pytest-runner', ]
 
