@@ -1,7 +1,7 @@
 from django import VERSION as django_version
 from django.contrib import admin
 from mptt.admin import DraggableMPTTAdmin
-from nested_admin.nested import NestedModelAdmin, NestedStackedInline, NestedTabularInline
+from nested_admin.nested import NestedModelAdmin, NestedStackedInline
 
 from cms.models import Page, Section, Component, ComponentType
 
@@ -17,13 +17,19 @@ class ComponentInlineAdmin(NestedStackedInline):
 
     model = Component
     extra = 1
+    fields = ('name', 'component_type', 'content')
     # sortable_field_name = ''
 
-class SectionInlineAdmin(NestedTabularInline):
+    # @property
+    # def formfield_overrides(self):
+
+    #     self.get_ob
+
+class SectionInlineAdmin(NestedStackedInline):
 
     model = Section
     can_delete = False
-    fields = ('name', 'slug',)
+    fields = ('name',)
     extra = 1
     verbose_name = 'Section for this Page'
     show_change_link = False

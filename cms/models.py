@@ -118,7 +118,8 @@ class Section(BaseModel):
     slug = models.CharField(
         max_length=255,
         null=False,
-        blank=True)
+        blank=True,
+        help_text='The Slug value is auto-generated from your section\'s name.')
 
     def __str__(self):
 
@@ -155,7 +156,8 @@ class Component(BaseModel):
     slug = models.CharField(
         max_length=255,
         null=False,
-        blank=True
+        blank=True,
+        help_text='The Slug Value is auto-generated from your component\'s name.'
     )
 
     content = models.TextField(null=False, blank=False)
@@ -185,7 +187,8 @@ class ComponentType(BaseModel):
     slug = models.CharField(
         max_length=255,
         null=False,
-        blank=True)
+        blank=True,
+        help_text='The Slug Value is auto-generated from the component type\'s name.')
 
     is_static = models.BooleanField(default=True)
 
