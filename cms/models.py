@@ -1,10 +1,10 @@
+import jsonschema
 from django.urls import reverse
 from django.db import models
 from django.utils.text import slugify
 
 from mptt.models import MPTTModel, TreeForeignKey
 
-from cms.config import configuration
 from cms.utils import get_current_site_id
 
 # Create your models here.
@@ -21,19 +21,19 @@ class BaseModel(models.Model):
 class Resource(BaseModel, MPTTModel):
 
     name = models.CharField(
-        max_length=configuration.resource_name_config.get('LENGTH'),
-        null=(not configuration.resource_name_config.get('REQUIRED')),
-        blank=configuration.resource_name_config.get('BLANK'))
+        max_length=255,
+        null=False,
+        blank=False)
 
     description = models.CharField(
-        max_length=configuration.resource_description_config.get('LENGTH'),
-        null=(not configuration.resource_description_config.get('REQUIRED')),
-        blank=configuration.resource_description_config.get('BLANK'))
+        max_length=500,
+        null=True,
+        blank=True)
 
     slug = models.CharField(
-        max_length=configuration.resource_slug_config.get('LENGTH'),
-        null=(not configuration.resource_slug_config.get('REQUIRED')),
-        blank=configuration.resource_slug_config.get('BLANK'))
+        max_length=255,
+        null=False,
+        blank=True)
 
     parent = TreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True, on_delete=models.CASCADE)
 
@@ -81,9 +81,10 @@ class Page(Resource):
     typical HTML page, that has a name, description and a unique slug.
     '''
     title = models.CharField(
-        max_length=configuration.page_title_config.get('LENGTH'),
-        null=(not configuration.page_title_config.get('REQUIRED')),
-        blank=configuration.page_title_config.get('BLANK'))
+        max_length=255,
+        null=True,
+        blank=True,
+        help_text='(Optional) The page title is optional. If it is empty, the Page Name will be used.')
 
     site = models.ForeignKey('sites.Site', default=get_current_site_id, on_delete=models.CASCADE)
 
@@ -102,22 +103,22 @@ class Page(Resource):
 
 class Section(BaseModel):
 
-    resource = models.ForeignKey(
-        configuration.section_resource_config.get('FOREIGN_KEY', 'cms.Page'),
+    page = models.ForeignKey(
+        'cms.Page', 
         on_delete=models.CASCADE,
         help_text="Select the page that this section belongs to."
     )
 
     name = models.CharField(
-        max_length=configuration.section_name_config.get('LENGTH'),
-        null=(not configuration.section_name_config.get('REQUIRED')),
-        blank=configuration.section_name_config.get('BLANK'),
+        max_length=255,
+        null=False,
+        blank=False,
         help_text='Give a name for the section')
 
     slug = models.CharField(
-        max_length=configuration.resource_slug_config.get('LENGTH'),
-        null=(not configuration.resource_slug_config.get('REQUIRED')),
-        blank=configuration.resource_slug_config.get('BLANK'))
+        max_length=255,
+        null=False,
+        blank=True)
 
     def __str__(self):
 
@@ -132,50 +133,107 @@ class Section(BaseModel):
 
         verbose_name = 'Page Section'
 
-
 class Component(BaseModel):
 
-    section = models.ForeignKey('cms.Section', on_delete=models.CASCADE)
+    section = models.ForeignKey(
+        'cms.Section', 
+        on_delete=models.CASCADE,
+        help_text='The section this component belongs to.'
+    )
+
+    component_type = models.ForeignKey(
+        'cms.ComponentType',
+        on_delete=models.CASCADE
+    )
+
+    name = models.CharField(
+        max_length=255,
+        null=False,
+        blank=False
+    )
+
+    slug = models.CharField(
+        max_length=255,
+        null=False,
+        blank=True
+    )
+
+    content = models.TextField(null=False, blank=False)
+
+    def save(self, *args, **kwargs):
+
+        self.validate_component()
+        return super(Component, self).save(*args, **kwargs)
+            
+
+    def validate_component(self):
+
+        content = self.content
+        json_schema = self.component_type.schema
+        jsonschema.validate(content, schema)
 
 
-class ComponentRegistry(object):
-
-    __registered_components = dict()
-
-    def register(self, component_name, component):
-        print("Registering component '%s'" % component_name)
-        if component_name in self.__registered_components:
-            print("\t Component is already registered. Skipping...")
-        else:
-            self.__registered_components[component_name] = component
-
-    @property
-    def components(self):
-
-        return self.__registered_components
+class ComponentType(BaseModel):
 
 
-component_registry = ComponentRegistry()
+    name = models.CharField(
+        max_length=255,
+        null=False,
+        blank=False,
+        help_text='The name of the component')
+
+    slug = models.CharField(
+        max_length=255,
+        null=False,
+        blank=True)
+
+    is_static = models.BooleanField(default=True)
+
+    schema = models.TextField(
+        null=False, 
+        default=False,
+        help_text='Valid JSON Schema to validate the datatype'
+    )
 
 
 
 
-class GenericComponent(Component):
 
-    title = models.CharField(max_length=255)
-    description = models.CharField(max_length=500)
+# class ComponentRegistry(object):
 
-class CarouselComponent(Component):
+#     __registered_components = dict()
 
-    image_1 = models.FileField()
-    caption_1 = models.CharField(max_length=255)
-    image_2 = models.FileField()
-    caption_2 = models.CharField(max_length=255)
-    image_3 = models.FileField()
-    caption_3 = models.CharField(max_length=255)
+#     def register(self, component_name, component):
+#         print("Registering component '%s'" % component_name)
+#         if component_name in self.__registered_components:
+#             print("\t Component is already registered. Skipping...")
+#         else:
+#             self.__registered_components[component_name] = component
 
-    class Meta:
-        verbose_name = 'Carousel'
+#     @property
+#     def components(self):
 
-component_registry.register('Generic', GenericComponent)
-component_registry.register('Carousel', CarouselComponent)
+#         return self.__registered_components
+
+
+# component_registry = ComponentRegistry()
+
+# class GenericComponent(Component):
+
+#     title = models.CharField(max_length=255)
+#     description = models.CharField(max_length=500)
+
+# class CarouselComponent(Component):
+
+#     image_1 = models.FileField()
+#     caption_1 = models.CharField(max_length=255)
+#     image_2 = models.FileField()
+#     caption_2 = models.CharField(max_length=255)
+#     image_3 = models.FileField()
+#     caption_3 = models.CharField(max_length=255)
+
+#     class Meta:
+#         verbose_name = 'Carousel'
+
+# component_registry.register('Generic', GenericComponent)
+# component_registry.register('Carousel', CarouselComponent)

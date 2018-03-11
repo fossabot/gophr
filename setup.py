@@ -13,11 +13,11 @@ with open('HISTORY.rst') as history_file:
 
 requirements = [
     'Click>=6.0',
+    'django-filter>=1.1.0',
     'django-mptt==0.9.0',
-    'Django<2.0',
+    'Django',
     'djangorestframework>3',
-    'click==6.7'
-    'django-filter==1.1.0',
+    'jsonschema==2.6.0'
 ]
 setup_requirements = ['pytest-runner', ]
 
