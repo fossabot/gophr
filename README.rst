@@ -20,18 +20,52 @@ Gophr CMS is the CMS for Professionals with Deadlines.
 
 
 * Free software: MIT license
-* Documentation: https://gophr.readthedocs.io.
+* Documentation: https://github.com/aeroxis/gophr.
 
 
 Features
 --------
 
-* TODO
+* CMS for Page Data Management
+    * Create multiple sections for any given page
+    * Create multiple components for each section
+        * Components follow a strict ComponentType to ensure all it's required values are set
 
-Credits
--------
 
-This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
+Getting Started
+---------------
 
-.. _Cookiecutter: https://github.com/audreyr/cookiecutter
-.. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
+1. Install from PyPI:
+
+.. highlight:: bash
+    :linenos:
+
+    pip install gophr
+
+2. Add Gophr and it's dependencies to your INSTALLED_APPS
+
+.. highlight:: python
+    :linenos:
+
+    INSTALLED_APPS = [
+        ...
+        'mptt',
+        'nested_admin',
+        'jsonschemaform',
+        'cms',
+    ]
+
+3. Setup Django by Migrating and Collecting Static
+
+.. highlight:: bash
+    :linenos:
+
+    python manage.py collectstatic --noinput
+    python manage.py migrate
+
+4. Start your Gophr CMS
+
+.. highlight:: bash
+    :linenos:
+
+    python manage.py runserver
