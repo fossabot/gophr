@@ -13,3 +13,4 @@ SECRET_KEY = '!s*jz&g_%%vtgvr@49!qopp_qw%jolj_nbf@125o1l$#zbln=w'
 INSTALLED_APPS.append('cms')
 INSTALLED_APPS.append('mptt')
 INSTALLED_APPS.append('nested_admin')
+INSTALLED_APPS.append('jsonschemaform')

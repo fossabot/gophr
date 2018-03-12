@@ -104,5 +104,6 @@ ENV/
 .vscode/
 .idea/
 
-# sqlite
+# gophr specific
 gophr/db.sqlite3
+gophr/static/

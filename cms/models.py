@@ -5,6 +5,7 @@ from django.utils.text import slugify
 
 from mptt.models import MPTTModel, TreeForeignKey
 
+from cms.fields import JSONTextField
 from cms.utils import get_current_site_id
 
 # Create your models here.
@@ -104,7 +105,7 @@ class Page(Resource):
 class Section(BaseModel):
 
     page = models.ForeignKey(
-        'cms.Page', 
+        'cms.Page',
         on_delete=models.CASCADE,
         help_text="Select the page that this section belongs to."
     )
@@ -121,9 +122,11 @@ class Section(BaseModel):
         blank=True,
         help_text='The Slug value is auto-generated from your section\'s name.')
 
+    position = models.IntegerField(default=0, null=False)
+
     def __str__(self):
 
-        return '%s :: %s' % (self.resource.name, self.name)
+        return '%s :: %s' % (self.page.name, self.name)
 
     def save(self, *args, **kwargs):
 
@@ -137,14 +140,15 @@ class Section(BaseModel):
 class Component(BaseModel):
 
     section = models.ForeignKey(
-        'cms.Section', 
+        'cms.Section',
         on_delete=models.CASCADE,
         help_text='The section this component belongs to.'
     )
 
     component_type = models.ForeignKey(
         'cms.ComponentType',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        default=''
     )
 
     name = models.CharField(
@@ -160,19 +164,36 @@ class Component(BaseModel):
         help_text='The Slug Value is auto-generated from your component\'s name.'
     )
 
-    content = models.TextField(null=False, blank=False)
+    content = JSONTextField(null=False, blank=True)
+
+    position = models.IntegerField(default=0, null=False)
+
+    def get_admin_edit_link(self):
+
+        if self.id:
+            url = reverse('admin:cms_component_change', args=(self.id,))
+            return '<a href="%s" target="_blank">Edit Component</a>' % url
+        else:
+            return 'Component not created yet. Please Save this component first before trying to edit it.'
+    get_admin_edit_link.allow_tags = True
+
+    def __str__(self):
+
+        return self.name
 
     def save(self, *args, **kwargs):
 
         self.validate_component()
+        self.slug = slugify(self.name)
         return super(Component, self).save(*args, **kwargs)
-            
+
 
     def validate_component(self):
 
         content = self.content
-        json_schema = self.component_type.schema
-        jsonschema.validate(content, schema)
+        # if self.content:
+        #     json_schema = self.component_type.schema
+        #     jsonschema.validate(content, json_schema)
 
 
 class ComponentType(BaseModel):
@@ -193,12 +214,15 @@ class ComponentType(BaseModel):
     is_static = models.BooleanField(default=True)
 
     schema = models.TextField(
-        null=False, 
+        null=False,
         default=False,
         help_text='Valid JSON Schema to validate the datatype'
     )
 
 
+    def __str__(self):
+
+        return '%s - (%s)' % (self.name, 'static' if self.is_static else 'dynamic')
 
 
 
