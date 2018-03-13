@@ -7,7 +7,7 @@ Gophr CMS
         :target: https://pypi.python.org/pypi/gophr
 
 .. image:: https://img.shields.io/travis/davydany/gophr.svg
-        :target: https://travis-ci.org/davydany/gophr
+        :target: https://travis-ci.org/aeroxis/gophr
 
 .. image:: https://readthedocs.org/projects/gophr/badge/?version=latest
         :target: https://gophr.readthedocs.io/en/latest/?badge=latest
@@ -35,13 +35,13 @@ Features
 Getting Started
 ---------------
 
-1. Install from PyPI:
+* Install from PyPI:
 
 .. code:: python
 
   pip install gophr
 
-2. Add Gophr and it's dependencies to your INSTALLED_APPS
+* Add Gophr and it's dependencies to your INSTALLED_APPS
 
 .. code:: python
 
@@ -53,14 +53,14 @@ Getting Started
       'cms',
   ]
 
-3. Setup Django by Migrating and Collecting Static
+* Setup Django by Migrating and Collecting Static
 
 .. code:: python
 
   python manage.py collectstatic --noinput
   python manage.py migrate
 
-4. Start your Gophr CMS
+* Start your Gophr CMS
 
 
 .. code:: python
