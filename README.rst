@@ -7,7 +7,7 @@ Gophr CMS
         :target: https://pypi.python.org/pypi/gophr
 
 .. image:: https://img.shields.io/travis/davydany/gophr.svg
-        :target: https://travis-ci.org/davydany/gophr
+        :target: https://travis-ci.org/aeroxis/gophr
 
 .. image:: https://readthedocs.org/projects/gophr/badge/?version=latest
         :target: https://gophr.readthedocs.io/en/latest/?badge=latest
@@ -20,18 +20,49 @@ Gophr CMS is the CMS for Professionals with Deadlines.
 
 
 * Free software: MIT license
-* Documentation: https://gophr.readthedocs.io.
+* Documentation: https://github.com/aeroxis/gophr.
 
 
 Features
 --------
 
-* TODO
+* CMS for Page Data Management
+    * Create multiple sections for any given page
+    * Create multiple components for each section
+        * Components follow a strict ComponentType to ensure all it's required values are set
 
-Credits
--------
 
-This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
+Getting Started
+---------------
 
-.. _Cookiecutter: https://github.com/audreyr/cookiecutter
-.. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
+* Install from PyPI:
+
+.. code:: python
+
+  pip install gophr
+
+* Add Gophr and it's dependencies to your INSTALLED_APPS
+
+.. code:: python
+
+  INSTALLED_APPS = [
+      ...
+      'mptt',
+      'nested_admin',
+      'jsonschemaform',
+      'cms',
+  ]
+
+* Setup Django by Migrating and Collecting Static
+
+.. code:: python
+
+  python manage.py collectstatic --noinput
+  python manage.py migrate
+
+* Start your Gophr CMS
+
+
+.. code:: python
+
+  python manage.py runserver

@@ -1,3 +1,4 @@
+import json
 from django.forms.models import model_to_dict
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 
@@ -10,11 +11,12 @@ class PageSerializer(ModelSerializer):
 
     parent = SerializerMethodField()
     children = SerializerMethodField()
+    sections = SerializerMethodField()
 
     class Meta:
 
         model = Page
-        fields = ('name', 'slug', 'description', 'is_published', 'path', 'parent', 'children', 'get_absolute_url', 'created_at', 'updated_at', )
+        fields = ('name', 'slug', 'description', 'is_published', 'path', 'parent', 'children', 'sections', 'get_absolute_url', 'created_at', 'updated_at', )
 
     def __get_page_attributes(self, page):
 
@@ -45,3 +47,23 @@ class PageSerializer(ModelSerializer):
             return self.__get_page_attributes(obj.parent)
         else:
             return []
+
+    def get_sections(self, obj):
+
+        sections = []
+        for section in obj.sections.all():
+
+            section_dict = {
+                'name': section.name,
+                'slug': section.slug,
+                'components': []
+            }
+            for component in section.components.all():
+                section_dict['components'].append({
+                    'name': component.name,
+                    'slug': component.slug,
+                    'content': json.loads(component.content) if component.content else {}
+                })
+
+            sections.append(section_dict)
+        return sections

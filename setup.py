@@ -13,11 +13,14 @@ with open('HISTORY.rst') as history_file:
 
 requirements = [
     'Click>=6.0',
+    'django-filter>=1.1.0',
     'django-mptt==0.9.0',
-    'Django<2.0',
+    'Django',
     'djangorestframework>3',
-    'click==6.7'
-    'django-filter==1.1.0',
+    'jsonschema==2.6.0',
+    'django-nested-admin==3.0.21',
+    'django-jsonschema-form==1.0.2',
+    'django-bower==5.2.0'
 ]
 setup_requirements = ['pytest-runner', ]
 
@@ -64,6 +67,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/davydany/gophr',
-    version='0.1.0',
+    version='0.1.3',
     zip_safe=False,
 )

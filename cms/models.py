@@ -1,10 +1,15 @@
+import json
+import jsonschema
+from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.db import models
 from django.utils.text import slugify
+from django.utils.translation import gettext_lazy as _
+
 
 from mptt.models import MPTTModel, TreeForeignKey
 
-from cms.config import configuration
+from cms.fields import JSONTextField
 from cms.utils import get_current_site_id
 
 # Create your models here.
@@ -21,19 +26,19 @@ class BaseModel(models.Model):
 class Resource(BaseModel, MPTTModel):
 
     name = models.CharField(
-        max_length=configuration.resource_name_config.get('LENGTH'),
-        null=(not configuration.resource_name_config.get('REQUIRED')),
-        blank=configuration.resource_name_config.get('BLANK'))
+        max_length=255,
+        null=False,
+        blank=False)
 
     description = models.CharField(
-        max_length=configuration.resource_description_config.get('LENGTH'),
-        null=(not configuration.resource_description_config.get('REQUIRED')),
-        blank=configuration.resource_description_config.get('BLANK'))
+        max_length=500,
+        null=True,
+        blank=True)
 
     slug = models.CharField(
-        max_length=configuration.resource_slug_config.get('LENGTH'),
-        null=(not configuration.resource_slug_config.get('REQUIRED')),
-        blank=configuration.resource_slug_config.get('BLANK'))
+        max_length=255,
+        null=False,
+        blank=True)
 
     parent = TreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True, on_delete=models.CASCADE)
 
@@ -81,9 +86,10 @@ class Page(Resource):
     typical HTML page, that has a name, description and a unique slug.
     '''
     title = models.CharField(
-        max_length=configuration.page_title_config.get('LENGTH'),
-        null=(not configuration.page_title_config.get('REQUIRED')),
-        blank=configuration.page_title_config.get('BLANK'))
+        max_length=255,
+        null=True,
+        blank=True,
+        help_text='(Optional) The page title is optional. If it is empty, the Page Name will be used.')
 
     site = models.ForeignKey('sites.Site', default=get_current_site_id, on_delete=models.CASCADE)
 
@@ -102,26 +108,30 @@ class Page(Resource):
 
 class Section(BaseModel):
 
-    resource = models.ForeignKey(
-        configuration.section_resource_config.get('FOREIGN_KEY', 'cms.Page'),
+    page = models.ForeignKey(
+        'cms.Page',
         on_delete=models.CASCADE,
-        help_text="Select the page that this section belongs to."
+        help_text="Select the page that this section belongs to.",
+        related_name='sections'
     )
 
     name = models.CharField(
-        max_length=configuration.section_name_config.get('LENGTH'),
-        null=(not configuration.section_name_config.get('REQUIRED')),
-        blank=configuration.section_name_config.get('BLANK'),
+        max_length=255,
+        null=False,
+        blank=False,
         help_text='Give a name for the section')
 
     slug = models.CharField(
-        max_length=configuration.resource_slug_config.get('LENGTH'),
-        null=(not configuration.resource_slug_config.get('REQUIRED')),
-        blank=configuration.resource_slug_config.get('BLANK'))
+        max_length=255,
+        null=False,
+        blank=True,
+        help_text='The Slug value is auto-generated from your section\'s name.')
+
+    position = models.IntegerField(default=0, null=False)
 
     def __str__(self):
 
-        return '%s :: %s' % (self.resource.name, self.name)
+        return '%s :: %s' % (self.page.name, self.name)
 
     def save(self, *args, **kwargs):
 
@@ -132,50 +142,109 @@ class Section(BaseModel):
 
         verbose_name = 'Page Section'
 
-
 class Component(BaseModel):
 
-    section = models.ForeignKey('cms.Section', on_delete=models.CASCADE)
+    section = models.ForeignKey(
+        'cms.Section',
+        on_delete=models.CASCADE,
+        help_text='The section this component belongs to.',
+        related_name='components'
+    )
 
+    component_type = models.ForeignKey(
+        'cms.ComponentType',
+        on_delete=models.CASCADE,
+        default=''
+    )
 
-class ComponentRegistry(object):
+    name = models.CharField(
+        max_length=255,
+        null=False,
+        blank=False
+    )
 
-    __registered_components = dict()
+    slug = models.CharField(
+        max_length=255,
+        null=False,
+        blank=True,
+        help_text='The Slug Value is auto-generated from your component\'s name.'
+    )
 
-    def register(self, component_name, component):
-        print("Registering component '%s'" % component_name)
-        if component_name in self.__registered_components:
-            print("\t Component is already registered. Skipping...")
+    content = JSONTextField(null=False, blank=True, default="{}")
+
+    position = models.IntegerField(default=0, null=False)
+
+    def get_admin_edit_link(self):
+
+        if self.id:
+            url = reverse('admin:cms_component_change', args=(self.id,))
+            return '<a href="#" onclick="window.open(\'%s?_popup=1\', \'Edit Component\', \'left=20,top=20,width=1024,height=512,toolbar=0,resizable=0\');">Edit Component</a>' % url
         else:
-            self.__registered_components[component_name] = component
+            return 'Component not created yet. Please Save this component first before trying to edit it.'
+    get_admin_edit_link.allow_tags = True
 
-    @property
-    def components(self):
+    def __str__(self):
 
-        return self.__registered_components
+        return self.name
+
+    def save(self, *args, **kwargs):
+
+        self.validate_component()
+        self.slug = slugify(self.name)
+        return super(Component, self).save(*args, **kwargs)
 
 
-component_registry = ComponentRegistry()
+    def validate_component(self):
+
+        content = self.content
+        if content and content != '{}':
+            json_schema = json.loads(self.component_type.schema)
+            content = json.loads(content)
+            jsonschema.validate(content, json_schema)
 
 
+class ComponentType(BaseModel):
 
 
-class GenericComponent(Component):
+    name = models.CharField(
+        max_length=255,
+        null=False,
+        blank=False,
+        help_text='The name of the component')
 
-    title = models.CharField(max_length=255)
-    description = models.CharField(max_length=500)
+    slug = models.CharField(
+        max_length=255,
+        null=False,
+        blank=True,
+        help_text='The Slug Value is auto-generated from the component type\'s name.')
 
-class CarouselComponent(Component):
+    is_static = models.BooleanField(default=True)
 
-    image_1 = models.FileField()
-    caption_1 = models.CharField(max_length=255)
-    image_2 = models.FileField()
-    caption_2 = models.CharField(max_length=255)
-    image_3 = models.FileField()
-    caption_3 = models.CharField(max_length=255)
+    schema = models.TextField(
+        null=False,
+        default=False,
+        help_text='Valid JSON Schema to validate the datatype'
+    )
 
     class Meta:
-        verbose_name = 'Carousel'
 
-component_registry.register('Generic', GenericComponent)
-component_registry.register('Carousel', CarouselComponent)
+        verbose_name = 'Component Type'
+
+    def __str__(self):
+
+        return '%s - (%s)' % (self.name, 'static' if self.is_static else 'dynamic')
+
+    def clean_fields(self, exclude=None):
+
+        super(ComponentType, self).clean_fields(exclude=exclude)
+        try:
+            json.loads(self.schema)
+        except json.JSONDecodeError as e:
+            raise ValidationError({
+                'schema': _('Schema is not a valid JSON. %s' % str(e))
+            })
+
+    def save(self, *args, **kwargs):
+
+        json.loads(self.schema)
+        return super(ComponentType, self).save(*args, **kwargs)
