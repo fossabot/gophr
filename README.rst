@@ -37,35 +37,32 @@ Getting Started
 
 1. Install from PyPI:
 
-.. highlight:: bash
-    :linenos:
+.. code:: python
 
-    pip install gophr
+  pip install gophr
 
 2. Add Gophr and it's dependencies to your INSTALLED_APPS
 
-.. highlight:: python
-    :linenos:
+.. code:: python
 
-    INSTALLED_APPS = [
-        ...
-        'mptt',
-        'nested_admin',
-        'jsonschemaform',
-        'cms',
-    ]
+  INSTALLED_APPS = [
+      ...
+      'mptt',
+      'nested_admin',
+      'jsonschemaform',
+      'cms',
+  ]
 
 3. Setup Django by Migrating and Collecting Static
 
-.. highlight:: bash
-    :linenos:
+.. code:: python
 
-    python manage.py collectstatic --noinput
-    python manage.py migrate
+  python manage.py collectstatic --noinput
+  python manage.py migrate
 
 4. Start your Gophr CMS
 
-.. highlight:: bash
-    :linenos:
 
-    python manage.py runserver
+.. code:: python
+
+  python manage.py runserver
