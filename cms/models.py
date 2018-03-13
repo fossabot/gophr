@@ -111,7 +111,8 @@ class Section(BaseModel):
     page = models.ForeignKey(
         'cms.Page',
         on_delete=models.CASCADE,
-        help_text="Select the page that this section belongs to."
+        help_text="Select the page that this section belongs to.",
+        related_name='sections'
     )
 
     name = models.CharField(
@@ -146,7 +147,8 @@ class Component(BaseModel):
     section = models.ForeignKey(
         'cms.Section',
         on_delete=models.CASCADE,
-        help_text='The section this component belongs to.'
+        help_text='The section this component belongs to.',
+        related_name='components'
     )
 
     component_type = models.ForeignKey(
@@ -176,7 +178,7 @@ class Component(BaseModel):
 
         if self.id:
             url = reverse('admin:cms_component_change', args=(self.id,))
-            return '<a href="%s" target="_blank">Edit Component</a>' % url
+            return '<a href="#" onclick="window.open(\'%s?_popup=1\', \'Edit Component\', \'left=20,top=20,width=1024,height=512,toolbar=0,resizable=0\');">Edit Component</a>' % url
         else:
             return 'Component not created yet. Please Save this component first before trying to edit it.'
     get_admin_edit_link.allow_tags = True
@@ -196,7 +198,8 @@ class Component(BaseModel):
 
         content = self.content
         if content and content != '{}':
-            json_schema = self.component_type.schema
+            json_schema = json.loads(self.component_type.schema)
+            content = json.loads(content)
             jsonschema.validate(content, json_schema)
 
 
