@@ -1,7 +1,11 @@
+import json
 import jsonschema
+from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.db import models
 from django.utils.text import slugify
+from django.utils.translation import gettext_lazy as _
+
 
 from mptt.models import MPTTModel, TreeForeignKey
 
@@ -164,7 +168,7 @@ class Component(BaseModel):
         help_text='The Slug Value is auto-generated from your component\'s name.'
     )
 
-    content = JSONTextField(null=False, blank=True)
+    content = JSONTextField(null=False, blank=True, default="{}")
 
     position = models.IntegerField(default=0, null=False)
 
@@ -191,9 +195,9 @@ class Component(BaseModel):
     def validate_component(self):
 
         content = self.content
-        # if self.content:
-        #     json_schema = self.component_type.schema
-        #     jsonschema.validate(content, json_schema)
+        if content and content != '{}':
+            json_schema = self.component_type.schema
+            jsonschema.validate(content, json_schema)
 
 
 class ComponentType(BaseModel):
@@ -219,48 +223,25 @@ class ComponentType(BaseModel):
         help_text='Valid JSON Schema to validate the datatype'
     )
 
+    class Meta:
+
+        verbose_name = 'Component Type'
 
     def __str__(self):
 
         return '%s - (%s)' % (self.name, 'static' if self.is_static else 'dynamic')
 
+    def clean_fields(self, exclude=None):
 
+        super(ComponentType, self).clean_fields(exclude=exclude)
+        try:
+            json.loads(self.schema)
+        except json.JSONDecodeError as e:
+            raise ValidationError({
+                'schema': _('Schema is not a valid JSON. %s' % str(e))
+            })
 
-# class ComponentRegistry(object):
+    def save(self, *args, **kwargs):
 
-#     __registered_components = dict()
-
-#     def register(self, component_name, component):
-#         print("Registering component '%s'" % component_name)
-#         if component_name in self.__registered_components:
-#             print("\t Component is already registered. Skipping...")
-#         else:
-#             self.__registered_components[component_name] = component
-
-#     @property
-#     def components(self):
-
-#         return self.__registered_components
-
-
-# component_registry = ComponentRegistry()
-
-# class GenericComponent(Component):
-
-#     title = models.CharField(max_length=255)
-#     description = models.CharField(max_length=500)
-
-# class CarouselComponent(Component):
-
-#     image_1 = models.FileField()
-#     caption_1 = models.CharField(max_length=255)
-#     image_2 = models.FileField()
-#     caption_2 = models.CharField(max_length=255)
-#     image_3 = models.FileField()
-#     caption_3 = models.CharField(max_length=255)
-
-#     class Meta:
-#         verbose_name = 'Carousel'
-
-# component_registry.register('Generic', GenericComponent)
-# component_registry.register('Carousel', CarouselComponent)
+        json.loads(self.schema)
+        return super(ComponentType, self).save(*args, **kwargs)

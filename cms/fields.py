@@ -1,5 +1,5 @@
-from django.db import models
+from django.db.models import TextField
 
-class JSONTextField(models.TextField):
+class JSONTextField(TextField):
 
     pass
