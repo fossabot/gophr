@@ -19,7 +19,8 @@ requirements = [
     'djangorestframework>3',
     'jsonschema==2.6.0',
     'django-nested-admin==3.0.21',
-    'django-jsonschema-form==1.0.2'
+    'django-jsonschema-form==1.0.2',
+    'django-bower==5.2.0'
 ]
 setup_requirements = ['pytest-runner', ]
 

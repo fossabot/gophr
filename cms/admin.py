@@ -1,4 +1,5 @@
 import json
+from django.conf import settings
 from django import VERSION as django_version
 from django.contrib import admin
 from mptt.admin import DraggableMPTTAdmin
@@ -67,6 +68,7 @@ class SectionAdmin(admin.ModelAdmin):
     fields = ('page', 'name', 'slug')
     readonly_fields = ('slug',)
 
+
 class ComponentAdmin(admin.ModelAdmin):
 
     list_display = ('section', 'component_type', 'name', 'slug')
@@ -77,7 +79,7 @@ class ComponentAdmin(admin.ModelAdmin):
     class Media:
 
         js = (
-            '//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js', # jquery
+            settings.STATIC_URL + 'jquery/jquery.min.js',
         )
 
     def formfield_for_dbfield(self, db_field, request, **kwargs):

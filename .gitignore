@@ -107,3 +107,7 @@ ENV/
 # gophr specific
 gophr/db.sqlite3
 gophr/static/
+gophr/components/
+db.sqlite3
+components
+static
