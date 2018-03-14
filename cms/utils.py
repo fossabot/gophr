@@ -37,4 +37,4 @@ def get_current_site_id():
     Gets the current site id.
     '''
     site = get_current_site()
-    return site.id
+    return site.id if site else None
