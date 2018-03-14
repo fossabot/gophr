@@ -66,7 +66,7 @@ class Command(BaseCommand):
         Setup the root page element.
         '''
         print(site)
-        click.secho('Creating Homepage: ' + site.name)
+        click.secho('Creating Homepage: %s' % site.name)
         root_page_name = '%s Homepage' % site.name
         root = Page.objects.create(name=root_page_name, site=site)
         click.secho('Successfully created Homepage "%s"' % root_page_name, fg='green')
