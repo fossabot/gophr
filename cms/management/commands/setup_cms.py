@@ -16,6 +16,12 @@ class Command(BaseCommand):
 
     def handle(self, create_sample_data=None, site_name=None, domain=None, *args, **kwargs):
 
+        if not site_name:
+            site_name = 'My Site'
+
+        if not domain:
+            domain = 'example.com'
+
         # set up the site
         site = get_current_site()
         site_created = False
