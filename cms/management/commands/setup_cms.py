@@ -7,7 +7,7 @@ from cms.utils import get_current_site, setup_current_site
 
 class Command(BaseCommand):
 
-    help = 'Sets up the CMS for the user. Run this first before doing any work.'
+    help = 'Sets up the CMS for the user. Run this first before using Gophr CMS.'
 
     def add_arguments(self, parser):
         parser.add_argument('--site_name', action='store', help='Name of your Site (i.e: My Site)')
