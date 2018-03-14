@@ -26,7 +26,7 @@ setup_requirements = ['pytest-runner', ]
 
 test_requirements = ['pytest', ]
 
-packages = find_packages(include=['cms', 'cms.migrations', 'cms.management', 'cms.static'])
+packages = find_packages(include=['cms', 'cms.migrations', 'cms.management', 'cms.static', 'cms.management.commands'])
 print("Packages Included in this Setup.py: %s" % str(packages))
 
 setup(
@@ -67,6 +67,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/davydany/gophr',
-    version='0.1.3',
+    version='0.1.4',
     zip_safe=False,
 )

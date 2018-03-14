@@ -3,14 +3,15 @@ from django.conf import settings
 from django.contrib.sites.models import Site
 
 
-def setup_current_site():
+def setup_current_site(site_name=None, domain=None):
     '''
     Sets up the user with the current site.
     '''
     site_id = settings.SITE_ID
     click.secho('\nA site has not been configured for this CMS. Please answer the questions below.', fg='yellow')
-    domain = click.prompt('Please enter the domain you are registering the site for: (i.e.: mysite.com): ', type=str, default='mysite.com')
-    site_name = click.prompt('What is the name of your site? (i.e.: MySite DEV): ', type=str, default='MySite DEV')
+    if not (site_name or domain):
+        domain = click.prompt('Please enter the domain you are registering the site for: (i.e.: mysite.com): ', type=str, default='mysite.com')
+        site_name = click.prompt('What is the name of your site? (i.e.: MySite DEV): ', type=str, default='MySite DEV')
     site = Site.objects.create(id=site_id, domain=domain, name=site_name)
     return site
 

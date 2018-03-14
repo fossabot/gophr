@@ -10,16 +10,18 @@ class Command(BaseCommand):
     help = 'Sets up the CMS for the user. Run this first before doing any work.'
 
     def add_arguments(self, parser):
+        parser.add_argument('--site_name', action='store', help='Name of your Site (i.e: My Site)')
+        parser.add_argument('--domain', action='store', help='Domain of your site (i.e.: example.com)')
         parser.add_argument('--create-sample-data', action='store_true',)
 
-    def handle(self, create_sample_data=None, *args, **kwargs):
+    def handle(self, create_sample_data=None, site_name=None, domain=None, *args, **kwargs):
 
         # set up the site
         site = get_current_site()
         site_created = False
         if not site:
             site_created = True
-            setup_current_site()
+            setup_current_site(site_name=site_name, domain=domain)
 
         # create root element if it doesn't exist
         existing_pages = Page.objects.all()
@@ -49,6 +51,7 @@ class Command(BaseCommand):
                 else:
                     click.secho('Quitting CMS Setup.', fg='yellow')
                     click.secho('You can now start using the CMS!', fg='green')
+                    return
         else:
             click.secho('Your CMS is already setup. You can go ahead and starting using it!', fg='green')
         
