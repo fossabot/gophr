@@ -7,7 +7,10 @@ from cms.models import Component, ComponentType, Section
 
 OBJ_TYPE_TO_FIELD_LOOKUP = {
     'string': models.CharField,
-    'number': models.FloatField
+    'number': models.FloatField,
+    'bool': models.CharField,
+    'file': models.FileField,
+    'image': models.ImageField
 }
 
 def validate_schema(schema):
