@@ -7,4 +7,6 @@ recursive-include tests *
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
 
-recursive-include docs *.rst conf.py Makefile make.bat *.jpg *.png *.gif cms/static
+recursive-include cms/static *
+
+recursive-include docs *.rst conf.py Makefile make.bat *.jpg *.png *.gif
