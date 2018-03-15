@@ -93,6 +93,4 @@ setup:
 	python manage.py collectstatic --noinput
 
 deploy:
-	mv env /tmp/env;
-	dpl --provider=pypi --username=davydany --password=${PYPI_PASSWORD} --distributions='sdist bdist_wheel'
-	mv /tmp/env ./env
+	python setup.py sdist bdist_wheel upload
