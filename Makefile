@@ -91,3 +91,8 @@ setup:
 	pip install -r requirements_dev.txt
 	python manage.py migrate
 	python manage.py collectstatic --noinput
+
+deploy:
+	mv env /tmp/env;
+	dpl --provider=pypi --username=davydany --password=${PYPI_PASSWORD} --distributions='sdist bdist_wheel'
+	mv /tmp/env ./env
