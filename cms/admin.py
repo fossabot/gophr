@@ -3,16 +3,12 @@ from django.conf import settings
 from django import VERSION as django_version
 from django.contrib import admin
 from mptt.admin import DraggableMPTTAdmin
-from jsonschemaform.admin.widgets.jsonschema_widget import JSONSchemaWidget
+from django.utils.safestring import mark_safe
 
 from nested_admin.nested import NestedModelAdmin, NestedStackedInline
 
 from cms.models import Page, Section, Component, ComponentType
-from cms.fields import JSONTextField
-# from cms.forms import ComponentAdminForm
-from cms.formsets import ComponentFormset
-from django.forms.models import inlineformset_factory
-
+from cms.form import component_form_factory
 
 def publish_page(modeladmin, request, queryset):
     queryset.update(is_published=True)
@@ -25,8 +21,14 @@ class ComponentInlineAdmin(NestedStackedInline):
     # formset = inlineformset_factory(Section, Component, form=ComponentFormset, fields=('name', 'slug', 'content'))
     sortable_field_name = 'position'
     ordering = ['position']
-    fields = ('component_type', 'name', 'slug', 'position', 'get_admin_edit_link')
-    readonly_fields = ('get_admin_edit_link',)
+    fields = ('component_type', 'name', 'slug', 'position', 'admin_edit_link')
+    readonly_fields = ('admin_edit_link',)
+
+    def admin_edit_link(self, obj):
+
+        return mark_safe(obj.get_admin_edit_link())
+    admin_edit_link.allow_tags = True
+    admin_edit_link.short_description = "Edit Component"
 
 
 class SectionInlineAdmin(NestedStackedInline):
@@ -54,6 +56,20 @@ class PageAdmin(DraggableMPTTAdmin, NestedModelAdmin):
     actions_on_top = True
     inlines = (SectionInlineAdmin,)
 
+    class Media:
+
+        js = (
+            settings.STATIC_URL + 'jquery/jquery.min.js',
+            settings.STATIC_URL + '/bootstrap/dist/js/bootstrap.min.js',
+        )
+
+        css = {
+            'all': (
+                settings.STATIC_URL + '/bootstrap/dist/css/bootstrap.min.css',
+                settings.STATIC_URL + '/gophr-cms/css/gophr-admin.css'
+            ),
+        }
+
     def api_url(self, obj):
         url = obj.get_absolute_url()
         if django_version[0] == 2:
@@ -72,29 +88,19 @@ class SectionAdmin(admin.ModelAdmin):
 class ComponentAdmin(admin.ModelAdmin):
 
     list_display = ('section', 'component_type', 'name', 'slug')
-    fields = ('section', 'component_type', 'name', 'slug', 'content')
-    readonly_fields = ('slug',)
-    list_display = ('name', 'section', 'component_type', 'slug')
-
-    class Media:
-
-        js = (
-            settings.STATIC_URL + 'jquery/jquery.min.js',
-        )
-
-    def formfield_for_dbfield(self, db_field, request, **kwargs):
-
-        if db_field.name == 'content':
-            schema = json.loads(self.obj.component_type.schema)
-            # kwargs['widget'] = JSONSchemaWidget(json.dumps(self.obj.component_type.schema))
-            kwargs['widget'] = JSONSchemaWidget(schema)
-
-        return super(ComponentAdmin, self).formfield_for_dbfield(db_field, request, **kwargs)
+    # fields = ('section', 'component_type', 'name',)
+    # readonly_fields = ('slug',)
+    list_display = ('name', 'section', 'component_type',)
 
     def get_form(self, request, obj=None, **kwargs):
 
         self.obj = obj
-        return super(ComponentAdmin, self).get_form(request, obj=obj, **kwargs)
+        schema = obj.component_type.schema
+        return component_form_factory(obj, json.loads(schema))
+
+        # self.obj = obj
+        # return super(ComponentAdmin, self).get_form(request, obj=obj, **kwargs)
+
 
 class ComponentTypeAdmin(admin.ModelAdmin):
 

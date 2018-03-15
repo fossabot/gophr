@@ -86,6 +86,7 @@ BOWER_PATH = '/Users/davydany/.nvm/versions/node/v7.4.0/bin/bower'
 
 BOWER_INSTALLED_APPS = (
     'jquery#1.9',
+    'bootstrap#3.3.7'
 )
 
 # Password validation
