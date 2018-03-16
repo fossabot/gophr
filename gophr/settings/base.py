@@ -37,6 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'djangobower',
     'rest_framework',
+    'mptt',
+    'nested_admin',
+    'jsonschemaform',
+    'cms'
 ]
 
 MIDDLEWARE = [
@@ -163,47 +167,43 @@ REST_FRAMEWORK = {
     # 'DEFAULT_METADATA_CLASS': 'rest_framework_json_api.metadata.JSONAPIMetadata',
 }
 
-# Settings for Django REST CMS
-cms = {
-    'MODELS' : {
-        'RESOURCE': {
-            'NAME': {
-                'LENGTH': 255,
-                'REQUIRED': True,
-                'BLANK': False
-            },
-            'DESCRIPTION': {
-                'LENGTH': 500,
-                'REQUIRED': False,
-                'BLANK': True
-            },
-            'SLUG': {
-                'LENGTH': 255,
-                'REQUIRED': True,
-                'BLANK': True
-            },
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
         },
-        'PAGE': {
-            'TITLE': {
-                'LENGTH': 255,
-                'REQUIRED': False,
-                'BLANK': True
-            }
+        'simple': {
+            'format': '%(levelname)s %(message)s'
         },
-        'SECTION': {
-            'RESOURCE': {
-                'FOREIGN_KEY': 'cms.Page'
-            },
-            'NAME': {
-                'LENGTH': 255,
-                'REQUIRED': True,
-                'BLANK': False
-            },
-            'SLUG': {
-                'LENGTH': 255,
-                'REQUIRED': True,
-                'BLANK': True
-            }
+    },
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
         },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'gophr': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        }
     }
 }

@@ -60,7 +60,7 @@ class PageAdmin(DraggableMPTTAdmin, NestedModelAdmin):
 
         js = (
             settings.STATIC_URL + 'jquery/jquery.min.js',
-            settings.STATIC_URL + '/bootstrap/dist/js/bootstrap.min.js',
+            # settings.STATIC_URL + '/bootstrap/dist/js/bootstrap.min.js',
         )
 
         css = {

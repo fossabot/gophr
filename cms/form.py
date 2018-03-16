@@ -6,20 +6,33 @@ from django import forms
 from cms.models import Component, ComponentType, Section
 
 OBJ_TYPE_TO_FIELD_LOOKUP = {
-    'string': models.CharField,
-    'number': models.FloatField,
-    'bool': models.CharField,
-    'file': models.FileField,
-    'image': models.ImageField
+    'string': {
+        'field': models.CharField,
+    },
+    'number': {
+        'field': models.FloatField
+    },
+    'bool': {
+        'field': models.CharField
+    },
+    'file': {
+        'field': models.FileField
+    },
+    'image': {
+        'field': models.ImageField
+    }
 }
 
 def validate_schema(schema):
 
     # first ensure that this is a valid schema
-    fields_to_check = ('title', 'type', 'properties', 'required')
+    fields_to_check = ('title', 'type', 'properties', 'required',)
     for field in fields_to_check:
         if field not in schema:
             raise ValueError("Invalid Schema. It must contain '%s' field." % field)
+
+    if 'max_count' not in schema:
+        schema['max_count'] = 1
 
     for property_name, property in schema['properties'].items():
 
@@ -64,7 +77,7 @@ def component_form_factory(component, schema):
     }
     for name, property in properties.items():
         property_type = property['type']
-        Field = OBJ_TYPE_TO_FIELD_LOOKUP[property_type]
+        Field = OBJ_TYPE_TO_FIELD_LOOKUP[property_type]['type']
         attrs[name.lower()] = Field(max_length=50)
 
     ComponentModel = type('ComponentForAdmin', (Component,), attrs)
