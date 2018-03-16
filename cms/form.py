@@ -77,7 +77,7 @@ def component_form_factory(component, schema):
     }
     for name, property in properties.items():
         property_type = property['type']
-        Field = OBJ_TYPE_TO_FIELD_LOOKUP[property_type]['type']
+        Field = OBJ_TYPE_TO_FIELD_LOOKUP[property_type]['field']
         attrs[name.lower()] = Field(max_length=50)
 
     ComponentModel = type('ComponentForAdmin', (Component,), attrs)
