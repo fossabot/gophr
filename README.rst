@@ -6,7 +6,7 @@ Gophr CMS
 .. image:: https://img.shields.io/pypi/v/gophr.svg
         :target: https://pypi.python.org/pypi/gophr
 
-.. image:: https://img.shields.io/travis/davydany/gophr.svg
+.. image:: https://img.shields.io/travis/aeroxis/gophr.svg
         :target: https://travis-ci.org/aeroxis/gophr
 
 .. image:: https://readthedocs.org/projects/gophr/badge/?version=latest
@@ -16,7 +16,10 @@ Gophr CMS
 
 
 
-Gophr CMS is the CMS for Professionals with Deadlines.
+Gophr CMS is the CMS for Professionals with Deadlines. 
+
+Gophr CMS is a headless CMS built on Django. It is designed with backend developers, frontend developers, content editors
+and project managers in mind. 
 
 
 * Free software: MIT license

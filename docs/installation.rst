@@ -12,7 +12,7 @@ To install Gophr CMS, run this command in your terminal:
 
 .. code-block:: console
 
-    $ pip install gophr
+    $ pip install --upgrade gophr
 
 This is the preferred method to install Gophr CMS, as it will always install the most recent stable release.
 
@@ -32,13 +32,13 @@ You can either clone the public repository:
 
 .. code-block:: console
 
-    $ git clone git://github.com/davydany/gophr
+    $ git clone git://github.com/aeroxis/gophr
 
 Or download the `tarball`_:
 
 .. code-block:: console
 
-    $ curl  -OL https://github.com/davydany/gophr/tarball/master
+    $ curl  -OL https://github.com/aeroxis/gophr/tarball/master
 
 Once you have a copy of the source, you can install it with:
 

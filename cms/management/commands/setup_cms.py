@@ -7,19 +7,27 @@ from cms.utils import get_current_site, setup_current_site
 
 class Command(BaseCommand):
 
-    help = 'Sets up the CMS for the user. Run this first before doing any work.'
+    help = 'Sets up the CMS for the user. Run this first before using Gophr CMS.'
 
     def add_arguments(self, parser):
+        parser.add_argument('--site_name', action='store', help='Name of your Site (i.e: My Site)')
+        parser.add_argument('--domain', action='store', help='Domain of your site (i.e.: example.com)')
         parser.add_argument('--create-sample-data', action='store_true',)
 
-    def handle(self, create_sample_data=None, *args, **kwargs):
+    def handle(self, create_sample_data=None, site_name=None, domain=None, *args, **kwargs):
+
+        if not site_name:
+            site_name = 'My Site'
+
+        if not domain:
+            domain = 'example.com'
 
         # set up the site
         site = get_current_site()
         site_created = False
         if not site:
             site_created = True
-            setup_current_site()
+            setup_current_site(site_name=site_name, domain=domain)
 
         # create root element if it doesn't exist
         existing_pages = Page.objects.all()
@@ -49,6 +57,7 @@ class Command(BaseCommand):
                 else:
                     click.secho('Quitting CMS Setup.', fg='yellow')
                     click.secho('You can now start using the CMS!', fg='green')
+                    return
         else:
             click.secho('Your CMS is already setup. You can go ahead and starting using it!', fg='green')
         
@@ -57,7 +66,7 @@ class Command(BaseCommand):
         Setup the root page element.
         '''
         print(site)
-        click.secho('Creating Homepage: ' + site.name)
+        click.secho('Creating Homepage: %s' % site.name)
         root_page_name = '%s Homepage' % site.name
         root = Page.objects.create(name=root_page_name, site=site)
         click.secho('Successfully created Homepage "%s"' % root_page_name, fg='green')

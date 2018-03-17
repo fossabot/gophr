@@ -6,12 +6,6 @@ from django.db import models
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
-
-from mptt.models import MPTTModel, TreeForeignKey
-
-from cms.fields import JSONTextField
-from cms.utils import get_current_site_id
-
 # Create your models here.
 class BaseModel(models.Model):
 
@@ -21,6 +15,60 @@ class BaseModel(models.Model):
     class Meta:
 
         abstract = True
+
+
+class ComponentType(BaseModel):
+
+
+    name = models.CharField(
+        max_length=255,
+        null=False,
+        blank=False,
+        help_text='The name of the component')
+
+    slug = models.CharField(
+        max_length=255,
+        null=False,
+        blank=True,
+        db_index=True,
+        help_text='The Slug Value is auto-generated from the component type\'s name.')
+
+    is_static = models.BooleanField(default=True)
+
+    schema = models.TextField(
+        null=False,
+        default=False,
+        help_text='Valid JSON Schema to validate the datatype'
+    )
+
+    class Meta:
+
+        verbose_name = 'Component Type'
+
+    def __str__(self):
+
+        return '%s - (%s)' % (self.name, 'static' if self.is_static else 'dynamic')
+
+    def clean_fields(self, exclude=None):
+
+        super(ComponentType, self).clean_fields(exclude=exclude)
+        try:
+            json.loads(self.schema)
+        except json.JSONDecodeError as e:
+            raise ValidationError({
+                'schema': _('Schema is not a valid JSON. %s' % str(e))
+            })
+
+    def save(self, *args, **kwargs):
+
+        json.loads(self.schema)
+        return super(ComponentType, self).save(*args, **kwargs)
+
+
+from mptt.models import MPTTModel, TreeForeignKey
+
+from cms.fields import JSONTextField
+from cms.utils import get_current_site_id
 
 
 class Resource(BaseModel, MPTTModel):
@@ -178,10 +226,9 @@ class Component(BaseModel):
 
         if self.id:
             url = reverse('admin:cms_component_change', args=(self.id,))
-            return '<a href="#" onclick="window.open(\'%s?_popup=1\', \'Edit Component\', \'left=20,top=20,width=1024,height=512,toolbar=0,resizable=0\');">Edit Component</a>' % url
+            return '<a class="btn btn-success" style="color:#fff;" href="#" onclick="window.open(\'%s?_popup=1\', \'Edit Component\', \'left=20,top=20,width=1024,height=512,toolbar=0,resizable=0\');">Click Here to Edit Component</a>' % url
         else:
             return 'Component not created yet. Please Save this component first before trying to edit it.'
-    get_admin_edit_link.allow_tags = True
 
     def __str__(self):
 
@@ -196,55 +243,5 @@ class Component(BaseModel):
 
     def validate_component(self):
 
-        content = self.content
-        if content and content != '{}':
-            json_schema = json.loads(self.component_type.schema)
-            content = json.loads(content)
-            jsonschema.validate(content, json_schema)
+        pass
 
-
-class ComponentType(BaseModel):
-
-
-    name = models.CharField(
-        max_length=255,
-        null=False,
-        blank=False,
-        help_text='The name of the component')
-
-    slug = models.CharField(
-        max_length=255,
-        null=False,
-        blank=True,
-        help_text='The Slug Value is auto-generated from the component type\'s name.')
-
-    is_static = models.BooleanField(default=True)
-
-    schema = models.TextField(
-        null=False,
-        default=False,
-        help_text='Valid JSON Schema to validate the datatype'
-    )
-
-    class Meta:
-
-        verbose_name = 'Component Type'
-
-    def __str__(self):
-
-        return '%s - (%s)' % (self.name, 'static' if self.is_static else 'dynamic')
-
-    def clean_fields(self, exclude=None):
-
-        super(ComponentType, self).clean_fields(exclude=exclude)
-        try:
-            json.loads(self.schema)
-        except json.JSONDecodeError as e:
-            raise ValidationError({
-                'schema': _('Schema is not a valid JSON. %s' % str(e))
-            })
-
-    def save(self, *args, **kwargs):
-
-        json.loads(self.schema)
-        return super(ComponentType, self).save(*args, **kwargs)

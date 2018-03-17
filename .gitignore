@@ -111,3 +111,4 @@ gophr/components/
 db.sqlite3
 components
 static
+.pytest_cache/

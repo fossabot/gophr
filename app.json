@@ -6,6 +6,16 @@
   "env": {
     "DJANGO_SETTINGS_MODULE": "gophr.settings.dev"
   },
+  "environments": {
+    "test": {
+      "env": {
+        "DJANGO_SETTINGS_MODULE": "gophr.settings.ci"
+      },
+      "scripts": {
+          "test": "make setup && make test"
+      }
+    }
+  },
   "formation": {
   },
   "addons": [

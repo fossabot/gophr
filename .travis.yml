@@ -1,19 +1,21 @@
 language: python
 python:
+- 3.5
 - 3.6
 install:
 - pip install -r requirements_dev.txt
 - pip install -e .
 script:
-- echo "Testing... OK, we need to implement this."
+- echo "Running Tests with 'pytest'"
+- pytest
 deploy:
   provider: pypi
   distributions: sdist bdist_wheel
   user: davydany
   on:
-    branch: master
-    repo: aeroxis/gophr
+    branch:
+      - master
     python:
     - 3.6
   password:
-    secure: l0S4N0dGMLtH8t9g3GZpudEmGYHjR7ffrC70ffDbXO3GNO4ND8RYAX9dTvO7Yi/81d2+8TsmxWTSkQ9n1bMdxd1UAJa1uGBPGZVZbN0YBvUhLTSkuJJSedMIy/KzX3BQrMNEVe1BS9yB4TRK3yPUlFtgMWfszC+aMQQVPq1zD7EAsaegVAnHCw6IjztkiUaBIIS47MVFUVc8TbLy+cfIOZWvKbP0YIIO03X7g42q+JXdtnEYagVohhRWIj8oDdZpHcSUhK0fZbGcdVxc7588G8G28PqsI7w6hkV8zsmiWZSWdQJ+AiZWwfn6/fajUK5LltlnVQgVVd3/Ql49ZEkQlhEcgail52cOFxEwOD8rHtEgUi9dLE29pkwULhscrNw24LIEBFaCLrUp5L2gp9QdIsc/x64I0jCZmXOTXZSSQtJCbIt5KN502+7T1q6Wc/BNcgUdhYEt8pRjjITbYFwzRDP+mfAfZvNW6uHtU0bTglTx5Qhekp5TvP18RhLs1e6Telz41K0ICnAeyj5qNHsx8wShZqPd6QJinnSXqFcPX8K8k3Pdhe5IW5Hb3Kg9gHAxwMgYajsoVa0dURL9S/fFLio7//C+MLcezdBaDGBpz6JL7x7aK1ulaEUqHZTVOcl77l7HqfcL0+T2dEZZriQXLvkKkFs6Hc4o2koSlyaK5Eo=
+    secure: LOVG+O3wg9uIj35G5UUCJMob53PrD5CqFCVpo1pMpU5MTmbOrqyIyCOpzzGC/sEuqYd3BsuHMttTTOhi1GZqlnMZb3iXFOL/9C7rjHYxf0514QjZK/FSwInAIyL+8BPD8RusdXgm2BLKGtvyF39fchLtYFKgt3CqUPZOYgzP1PoQE8UjTpxEwAjOFbEXMirYNQtJi6kJYvL2RuCjzsoIkoZ/hwa69bqQcOwkO1PjKGZqZN3CEA0nJ8YAA40s4V05w66WH1wV0cmcmFr+MyMi9PTHIczpKoH/zW5uriS7hgWancSPbov7YVJ9P6ERnlIqA0K5SHIcoduC7KCCE/R2hS0nvwg3qgqKfgsHCd4GyzxurebLKHv1kk25lFpIQAYdgcbk8UH33JcF77Hg5Nyxw9liDsPNEeopumua6FMLFUmqcEnmGsZfXhnLpXh689zW5BR9Cu9V9qiACcpKo7ZOjaqbrSD6k2ZwT/S/THR/5GDrWSv4z5fi4fum4eOTVXpsiNV/lfzkF2JOT8Ap79KqtVtq28F7BUsq/5jRGAC7Cyy8GjkcTfoA+Evc/xLttzMgZCudA0yJQ6d7hapyvS458K3TQtlzF586BxABpcLgXwLluYtv6v0jB6kQkvoEEN8niFNiW/auMGnLUIHpc5WVlEdKTJvKUSVc+aOyGiU4u1s=
