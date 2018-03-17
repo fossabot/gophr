@@ -47,5 +47,5 @@ Once you have a copy of the source, you can install it with:
     $ python setup.py install
 
 
-.. _Github repo: https://github.com/davydany/gophr
-.. _tarball: https://github.com/davydany/gophr/tarball/master
+.. _Github repo: https://github.com/aeroxis/gophr
+.. _tarball: https://github.com/aeroxis/gophr/tarball/master
