@@ -12,7 +12,7 @@
         "DJANGO_SETTINGS_MODULE": "gophr.settings.ci"
       },
       "scripts": {
-          "test": "pytest"
+          "test": "make setup && make test"
       }
     }
   },

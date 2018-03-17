@@ -91,6 +91,8 @@ setup:
 	pip install -r requirements_dev.txt
 	python manage.py migrate
 	python manage.py collectstatic --noinput
+test:
+	pytest
 
 deploy:
 	python setup.py sdist bdist_wheel upload
