@@ -9,8 +9,8 @@ Gophr CMS
 .. image:: https://img.shields.io/travis/aeroxis/gophr.svg
         :target: https://travis-ci.org/aeroxis/gophr
 
-.. image:: https://readthedocs.org/projects/gophr/badge/?version=latest
-        :target: https://gophr.readthedocs.io/en/latest/?badge=latest
+.. image:: https://readthedocs.org/projects/gophr-cms/badge/?version=latest
+        :target: https://gophr-cms.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
 

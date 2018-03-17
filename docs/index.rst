@@ -1,11 +1,14 @@
 Welcome to Gophr CMS's documentation!
 ======================================
 
+.. image:: https://media.githubusercontent.com/media/aeroxis/gophr/development/docs/gophr-logo.png
+
+.. include:: ../README.rst
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   readme
    installation
    usage
    modules
