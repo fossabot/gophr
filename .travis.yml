@@ -13,7 +13,8 @@ deploy:
   distributions: sdist bdist_wheel
   user: davydany
   on:
-    all_branches: true
+    branch:
+      - master
     python:
     - 3.6
   password:

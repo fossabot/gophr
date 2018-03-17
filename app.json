@@ -1,0 +1,18 @@
+{
+  "env": {
+    "SECRET_TOKEN": {
+      "description": "A secret key for verifying the integrity of signed cookies.",
+      "generator": "secret"
+    }
+  },
+  "environments": {
+    "test": {
+      "env": {
+        "DJANGO_SETTINGS_MODULE": "gophr.settings.ci"
+      },
+      "scripts": {
+          "test": "pytest"
+      }
+    }
+  }
+}
