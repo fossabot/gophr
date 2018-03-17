@@ -11,6 +11,9 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
+with open('VERSION') as version_file:
+    version = version_file.read()
+
 requirements = [
     'Click>=6.0',
     'django-filter>=1.1.0',
@@ -66,7 +69,7 @@ setup(
     setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,
-    url='https://github.com/davydany/gophr',
-    version='0.1.13',
+    url='https://github.com/aeroxis/gophr',
+    version=version,
     zip_safe=False,
 )
