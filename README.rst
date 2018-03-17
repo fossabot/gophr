@@ -1,3 +1,5 @@
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Faeroxis%2Fgophr.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Faeroxis%2Fgophr?ref=badge_shield)
+
 =========
 Gophr CMS
 =========
@@ -69,3 +71,7 @@ Getting Started
 .. code:: python
 
   python manage.py runserver
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Faeroxis%2Fgophr.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Faeroxis%2Fgophr?ref=badge_large)
