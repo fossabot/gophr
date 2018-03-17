@@ -1,9 +1,10 @@
 {
+  "name": "gophr",
+  "scripts": {
+    "postdeploy": "make setup"
+  },
   "env": {
-    "SECRET_TOKEN": {
-      "description": "A secret key for verifying the integrity of signed cookies.",
-      "generator": "secret"
-    }
+    "DJANGO_SETTINGS_MODULE": "gophr.settings.dev"
   },
   "environments": {
     "test": {
@@ -14,5 +15,15 @@
           "test": "pytest"
       }
     }
-  }
+  },
+  "formation": {
+  },
+  "addons": [
+    "heroku-postgresql"
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ]
 }
